@@ -1,92 +1,87 @@
 # Класс, представляющий интерфейс состояния
 class OrderState
-  def next_state
-    raise NotImplementedError, 'Метод должен быть определен в подклассе'
-  end
+    def next_state
+        raise NotImplementedError, 'Метод должен быть определен в подклассе'
+    end
 
-  def cancel
-    raise NotImplementedError, 'Метод должен быть определен в подклассе'
-  end
+    def cancel
+        raise NotImplementedError, 'Метод должен быть определен в подклассе'
+    end
 
-  def ship
-    raise NotImplementedError, 'Метод должен быть определен в подклассе'
-  end
+    def ship
+        raise NotImplementedError, 'Метод должен быть определен в подклассе'
+    end
 end
 
 # Состояние "Новый заказ"
 class NewOrderState < OrderState
-  def next_state
-    ProcessingOrderState.new
-  end
+    def next_state
+        ProcessingOrderState.new
+    end
 
-  def cancel
-    puts 'Заказ был отменен'
-  end
+    def cancel
+        puts 'Заказ был отменен'
+    end
 
-  def ship
-    raise 'Заказ не может быть отправлен, пока не обработан'
-  end
+    def ship
+        raise 'Заказ не может быть отправлен, пока не обработан'
+    end
 end
 
 # Состояние "Обработка заказа"
 class ProcessingOrderState < OrderState
-  def next_state
-    ShippedOrderState.new
-  end
+    def next_state
+        ShippedOrderState.new
+    end
 
-  def cancel
-    puts 'Заказ был отменен'
-  end
+    def cancel
+        puts 'Заказ был отменен'
+    end
 
-  def ship
-    puts 'Заказ отправлен'
-  end
+    def ship
+        puts 'Заказ отправлен'
+    end
 end
 
 # Состояние "Заказ отправлен"
 class ShippedOrderState < OrderState
-  def next_state
-    raise 'Заказ уже отправлен'
-  end
+    def next_state
+        raise 'Заказ уже отправлен'
+    end
 
-  def cancel
-    raise 'Невозможно отменить отправленный заказ'
-  end
+    def cancel
+        raise 'Невозможно отменить отправленный заказ'
+    end
 
-  def ship
-    raise 'Заказ уже отправлен'
-  end
+    def ship
+        raise 'Заказ уже отправлен'
+    end
 end
 
 # Класс, управляющий заказом
 class Order
-  def initialize
-    @state = NewOrderState.new
-  end
+    def initialize
+        @state = NewOrderState.new
+    end
 
-  def next_state
-    @state = @state.next_state
-  end
+    def next_state
+        @state = @state.next_state
+    end
 
-  def cancel
-    @state.cancel
-  end
+    def cancel
+        @state.cancel
+    end
 
-  def ship
-    @state.ship
-    next_state
-  end
+    def ship
+        @state.ship
+        next_state
+    end
 end
 
 # Использование
 order = Order.new
-order.ship # Ошибка: Заказ не может быть отправлен, пока не обработан
 
-order.cancel # Заказ был отменен
-
-order.ship # Ошибка: Заказ не может быть отправлен, пока не обработан
 
 order.next_state
-order.ship # Заказ отправлен
-
-order.ship # Ошибка: Заказ уже отправлен
+order.ship
+order.cancel
